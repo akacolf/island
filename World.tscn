@@ -1,3 +1,120 @@
 [gd_scene format=3 uid="uid://c3b376v1twrl3"]
 
-[node name="Node3D" type="Node3D" unique_id=1597460302]
+[ext_resource type="Script" uid="uid://c45m7rkvjchqa" path="res://scripts/player/player.gd" id="1_c6gwx"]
+
+[sub_resource type="ProceduralSkyMaterial" id="ProceduralSkyMaterial_bcbcq"]
+
+[sub_resource type="Sky" id="Sky_2dftf"]
+sky_material = SubResource("ProceduralSkyMaterial_bcbcq")
+
+[sub_resource type="Environment" id="Environment_c6gwx"]
+background_mode = 2
+sky = SubResource("Sky_2dftf")
+
+[sub_resource type="CapsuleShape3D" id="CapsuleShape3D_thlg7"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_2dftf"]
+albedo_color = Color(0.03137255, 1, 1, 1)
+
+[sub_resource type="CapsuleMesh" id="CapsuleMesh_0djns"]
+radius = 0.4
+height = 1.8
+
+[sub_resource type="Gradient" id="Gradient_2dftf"]
+offsets = PackedFloat32Array(0.2, 1)
+colors = PackedColorArray(1, 1, 1, 1, 0, 0, 0, 1)
+
+[sub_resource type="FastNoiseLite" id="FastNoiseLite_bcbcq"]
+noise_type = 2
+frequency = 0.03
+cellular_jitter = 3.0
+cellular_return_type = 0
+domain_warp_enabled = true
+domain_warp_type = 1
+domain_warp_amplitude = 50.0
+domain_warp_fractal_type = 2
+domain_warp_fractal_lacunarity = 1.5
+domain_warp_fractal_gain = 1.0
+
+[sub_resource type="NoiseTexture2D" id="NoiseTexture2D_js7pq"]
+noise = SubResource("FastNoiseLite_bcbcq")
+color_ramp = SubResource("Gradient_2dftf")
+seamless = true
+
+[sub_resource type="Terrain3DMaterial" id="Terrain3DMaterial_eu7l1"]
+_shader_parameters = {
+&"bias_distance": null,
+&"blend_sharpness": null,
+&"depth_blur": null,
+&"enable_macro_variation": null,
+&"enable_projection": null,
+&"flat_terrain_normals": null,
+&"macro_variation1": null,
+&"macro_variation2": null,
+&"macro_variation_slope": null,
+&"mipmap_bias": null,
+&"noise1_angle": null,
+&"noise1_offset": null,
+&"noise1_scale": null,
+&"noise2_scale": null,
+&"noise_texture": SubResource("NoiseTexture2D_js7pq"),
+&"projection_threshold": null
+}
+show_checkered = true
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_p1v5b"]
+transparency = 4
+cull_mode = 2
+vertex_color_use_as_albedo = true
+backlight_enabled = true
+backlight = Color(0.5, 0.5, 0.5, 1)
+distance_fade_mode = 1
+distance_fade_min_distance = 128.0
+distance_fade_max_distance = 96.0
+
+[sub_resource type="Terrain3DMeshAsset" id="Terrain3DMeshAsset_wygdx"]
+generated_type = 1
+height_offset = 0.5
+material_override = SubResource("StandardMaterial3D_p1v5b")
+last_lod = 0
+last_shadow_lod = 0
+lod0_range = 128.0
+
+[sub_resource type="Terrain3DAssets" id="Terrain3DAssets_bah7m"]
+mesh_list = Array[Terrain3DMeshAsset]([SubResource("Terrain3DMeshAsset_wygdx")])
+
+[node name="World" type="Node3D" unique_id=1597460302]
+
+[node name="Environment" type="WorldEnvironment" parent="." unique_id=806335064]
+environment = SubResource("Environment_c6gwx")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="." unique_id=178978417]
+transform = Transform3D(0.8660254, 0.35355338, -0.35355338, 0, 0.70710677, 0.70710677, 0.5, -0.6123724, 0.6123724, 0, 0, 0)
+
+[node name="Player" type="CharacterBody3D" parent="." unique_id=501816170]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0)
+script = ExtResource("1_c6gwx")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Player" unique_id=816213633]
+shape = SubResource("CapsuleShape3D_thlg7")
+
+[node name="Mesh" type="MeshInstance3D" parent="Player" unique_id=1532097716]
+material_override = SubResource("StandardMaterial3D_2dftf")
+mesh = SubResource("CapsuleMesh_0djns")
+
+[node name="CameraPivot" type="Node3D" parent="Player" unique_id=1698804979]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Player/CameraPivot" unique_id=1935228723]
+transform = Transform3D(1, 0, 0, 0, 0.9848077, 0.17364818, 0, -0.17364818, 0.9848077, 0, 1.5, 5)
+current = true
+
+[node name="Terrain3D" type="Terrain3D" parent="." unique_id=1597177871]
+data_directory = "res://terrain_data"
+material = SubResource("Terrain3DMaterial_eu7l1")
+assets = SubResource("Terrain3DAssets_bah7m")
+show_checkered = true
+top_level = true
+metadata/_edit_lock_ = true
